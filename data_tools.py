@@ -91,7 +91,7 @@ def filter_dataset_by_common_vertex(df, sig_level=0.95):
     filtered_df["B0_ENDVERTEX_p_value"] = filtered_df.apply(calc_p_value, axis=1)
 
 
-    # Only keep candidates where the p-value is below our significance level (i.e. there is a high probability the particles form a vertex)
+    # Only keep candidates where the p-value is above our significance level (i.e. there is a high probability the particles form a vertex)
     filtered_df = filtered_df[filtered_df["B0_ENDVERTEX_p_value"] > sig_level]
 
     # (we could do a similar analysis for Kstar_ENDVERTEX_CHI2 and J_psi_ENDVERTEX_CHI2?)
