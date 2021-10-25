@@ -97,3 +97,33 @@ def filter_dataset_by_common_vertex(df, sig_level=0.95):
     # (we could do a similar analysis for Kstar_ENDVERTEX_CHI2 and J_psi_ENDVERTEX_CHI2?)
 
     return filtered_df
+
+
+def filter_dataset_by_pt(df, p_ratio = 0.1):
+    """
+    Filters the DataFrame by removing rows with particles that have small transverse momentum
+    
+    Size of the transverse momentum is quantified by taking the ratio of the transverse momentum to its momentum in the z direction
+    
+    Particles that have a smaller ratio than p_ratio are removed from the dataset
+    
+    Params
+    ------
+    df: pandas.DataFrame containing the data
+    sig_level: float defining the cutoff ratio at which we keep/discard rows (set to 0.1 by default)
+    
+    Returns
+    ------
+    pandas.DataFrame containing the filtered data
+    """
+    
+    particles = ["mu_plus", "mu_minus", "K", "Pi"]
+    
+    filtered_df = df.copy()
+    
+    #iterate ratio calculation over all particles
+    for particle in particles:
+        filtered_df["{}_p_ratio".format(particle)] = filtered_df["{}_PT".format(particle)]/filtered_df["{}_PZ".format(particle)]
+        filtered_df = filtered_df[filtered_df["{}_p_ratio".format(particle)] > p_ratio]
+        
+    return filtered_df
