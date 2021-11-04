@@ -4,7 +4,7 @@ This is to run some basic checks on the sim data so I can see what we are workin
 
 import pandas as pd
 import matplotlib.pyplot as plt
-from filtering_process import filter_dataset
+from data_tools import filter_dataset
 
 particles = ['mu_plus_', 'mu_minus_', 'K_', 'Pi_']
 p_col_names = ['P', 'PT', 'PE', 'PX', 'PY', 'PZ']
