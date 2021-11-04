@@ -42,7 +42,7 @@ def separate_dataset(df, columns_idx, prob=0.95):
     return separated_df
 
 
-def filter_dataset(df, prob=0.3, PKMuMu_OWNPV_filter = 9, K_s_ratio = 9, mu_pt_lim = 300, \
+def filter_dataset(df, prob=0.3, PKMuMu_OWNPV_filter = 9, K_s_ratio = 25, mu_pt_lim = 300, \
                                 B0_dira = 0.9995, B0_ratio = 9, B0_ipcs_opv_lim = 25, B0_fdcs_opv_lim = 100):
     """
     Filters the DataFrame by only keeping the rows where we are confident that the mu plus and mu minus are indeed muons, the K is indeed a kaon, and the pi is a pion.
@@ -98,7 +98,7 @@ def filter_dataset(df, prob=0.3, PKMuMu_OWNPV_filter = 9, K_s_ratio = 9, mu_pt_l
                             & (pf_df["mu_plus_IPCHI2_OWNPV"] > PKMuMu_OWNPV_filter)\
                             & (pf_df["mu_minus_IPCHI2_OWNPV"] > PKMuMu_OWNPV_filter)\
                             & (pf_df["mu_minus_IPCHI2_OWNPV"] > PKMuMu_OWNPV_filter)\
-                                & (((pf_df["Kstar_ENDVERTEX_CHI2"])/(pf_df["Kstar_ENDVERTEX_NDOF"])) > K_s_ratio)\
+                                & (((pf_df["Kstar_ENDVERTEX_CHI2"])/(pf_df["Kstar_ENDVERTEX_NDOF"])) < K_s_ratio)\
                                     & (pf_df["mu_plus_PT"] > mu_pt_lim)\
                                         & (pf_df["mu_minus_PT"] > mu_pt_lim)\
                                             & (pf_df["B0_DIRA_OWNPV"] > B0_dira)\
