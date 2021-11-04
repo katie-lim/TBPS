@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import pickle5 as pickle
 from scipy.stats import chi2
 
 
@@ -21,6 +20,7 @@ def load_dataset(filepath):
 
     return df.fillna(0)
 
+
 def separate_dataset(df, columns_idx, prob=0.95):
     """
     Separates the DataFrame based on the probability columns into dataframe for each particle
@@ -40,7 +40,6 @@ def separate_dataset(df, columns_idx, prob=0.95):
         particle_df = df[df[df.columns[column]]>prob]
         separated_df.append(particle_df)
     return separated_df
-
 
 
 def filter_dataset(df, prob=0.3, PKMuMu_OWNPV_filter = 9, K_s_ratio = 9, mu_pt_lim = 300, \
