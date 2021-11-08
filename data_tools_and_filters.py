@@ -26,7 +26,7 @@ def make_clean_df(fpath):
     for col in df.columns:
         if net in col:
             # Force the values to be probabilities if they are negative
-            df[col].clip(0, 1)
+            df[col].clip(0, 1, inplace=True)
     return df
 
 def type_check(type):
@@ -68,17 +68,20 @@ def type_combined_filter(df, type, lower_bound=0.2):
     The filtered dataframe
     """
     type = type_check(type)
-    df['cumprod'] = 1
+    df['cumprod_'+type] = 1
     for part in prob_particles:
         col_name = type + net + part
-        if part in type.lower():
-            # Correct identification probability
-            df['cumprod'] *= df[col_name]
+        if part == 'e' or part == 'p':
+            # Mistaken identification probability: electrons and protons are NOT what we are checking for
+            df['cumprod_'+type] *= 1 - df[col_name]
+        elif part in type.lower():
+            # Correct identification probability: decay particle is the type we are checking for
+            df['cumprod_'+type] *= df[col_name]
         else:
-            # Mistaken identification probability
-            df['cumprod'] *= 1 - df[col_name]
+            # Mistaken identification probability: decay particle is NOT the type we are checking for
+            df['cumprod_'+type] *= 1 - df[col_name]
 
-    return df[df['cumprod'] > lower_bound].drop(columns='cumprod')
+    return df[df['cumprod_'+type] > lower_bound].drop(columns='cumprod_'+type)
 
 def type_IPCHI2_OWNPV_filter(df, type, PKMuMu_OWNPV_filter=9):
     """
