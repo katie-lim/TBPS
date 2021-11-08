@@ -159,8 +159,10 @@ if __name__ == '__main__':
     lhc_log = filter_and_log_index(lhc_df, filter_process=filters_and_params, mode='cumulative')
     sim_log = filter_and_log_index(sim_df, filter_process=filters_and_params, mode='cumulative')
 
+    print('For the real data:')
     for key in lhc_log:
         print(f'{key}, {len(lhc_log[key])} rows remaining')
 
+    print('For the simulated data:')
     for key in sim_log:
         print(f'{key}, {len(sim_log[key])} rows remaining')

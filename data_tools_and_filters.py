@@ -4,6 +4,19 @@ decay_particles = ['mu_plus', 'mu_minus', 'K', 'Pi']
 prob_particles = ['k', 'pi', 'mu', 'e', 'p']
 net = '_MC15TuneV1_ProbNN'
 
+# 0-9 are the given bin ranges; 10 is just there to include everything (widest possible bin)
+q2_bin_ranges = {0: [0.1, 0.98],
+                 1: [1.1, 2.5],
+                 2: [2.5, 4.0],
+                 3: [4.0, 6.0],
+                 4: [6.0, 8.0],
+                 5: [15.0, 17.0],
+                 6: [17.0, 19.0],
+                 7: [11.0, 12.5],
+                 8: [1.0, 6.0],
+                 9: [15.0, 17.9],
+                 10: [0.0, 25.0]}
+
 def make_clean_df(fpath):
     """
     Reads a pkl or csv file into a dataframe
@@ -29,6 +42,7 @@ def make_clean_df(fpath):
             df[col].clip(0, 1, inplace=True)
     return df
 
+
 def type_check(type):
     """
     Formats the input type (a decay particle) into the correct column name string, or raises an error
@@ -45,6 +59,7 @@ def type_check(type):
         return 'Pi'
     else:
         raise ValueError(f'Incorrect type, must be one of: {decay_particles}')
+
 
 def type_combined_filter(df, type, lower_bound=0.2):
     """
@@ -68,20 +83,21 @@ def type_combined_filter(df, type, lower_bound=0.2):
     The filtered dataframe
     """
     type = type_check(type)
-    df['cumprod_'+type] = 1
+    df['cumprod_' + type] = 1
     for part in prob_particles:
         col_name = type + net + part
         if part == 'e' or part == 'p':
             # Mistaken identification probability: electrons and protons are NOT what we are checking for
-            df['cumprod_'+type] *= 1 - df[col_name]
+            df['cumprod_' + type] *= 1 - df[col_name]
         elif part in type.lower():
             # Correct identification probability: decay particle is the type we are checking for
-            df['cumprod_'+type] *= df[col_name]
+            df['cumprod_' + type] *= df[col_name]
         else:
             # Mistaken identification probability: decay particle is NOT the type we are checking for
-            df['cumprod_'+type] *= 1 - df[col_name]
+            df['cumprod_' + type] *= 1 - df[col_name]
 
-    return df[df['cumprod_'+type] > lower_bound].drop(columns='cumprod_'+type)
+    return df[df['cumprod_' + type] > lower_bound].drop(columns='cumprod_' + type)
+
 
 def type_IPCHI2_OWNPV_filter(df, type, PKMuMu_OWNPV_filter=9):
     """
@@ -101,6 +117,7 @@ def type_IPCHI2_OWNPV_filter(df, type, PKMuMu_OWNPV_filter=9):
     colname = type + "_IPCHI2_OWNPV"
     return df[df[colname] > PKMuMu_OWNPV_filter]
 
+
 def mu_pt_filter(df, type, mu_pt_lim=300):
     type = type_check(type)
     if type not in ['mu_plus', 'mu_minus']:
@@ -108,20 +125,27 @@ def mu_pt_filter(df, type, mu_pt_lim=300):
         return df
     return df[df[type + '_PT'] > mu_pt_lim]
 
+
 def parent_ENDVERTEX_CHI2_filter(df, parent, ratio=9):
     if parent not in ['Kstar', 'B0']:
         raise NameError('Parent must be Kstar or B0')
-    return df[df[parent+'_ENDVERTEX_CHI2']/df[parent+'_ENDVERTEX_NDOF'] < ratio]
+    return df[df[parent + '_ENDVERTEX_CHI2'] / df[parent + '_ENDVERTEX_NDOF'] < ratio]
+
 
 def b0_IPCHI2_OWNPV_filter(df, B0_ipcs_opv_lim=25):
     return df[df['B0_IPCHI2_OWNPV'] < B0_ipcs_opv_lim]
 
+
 def b0_FDCHI2_OWNPV_filter(df, B0_fdcs_opv_lim=100):
     return df[df['B0_FDCHI2_OWNPV'] > B0_fdcs_opv_lim]
+
 
 def b0_DIRA_OWNPV_filter(df, B0_dira=0.9995):
     return df[df['B0_DIRA_OWNPV'] > B0_dira]
 
+def q2_bin_filter(df, range_int=10):
+    range = q2_bin_ranges[range_int]
+    return df[(range[0] < df['q2']) & (df['q2'] < range[1])]
 
 # Below are old filters kept here just in case
 '''
