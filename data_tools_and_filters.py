@@ -4,6 +4,9 @@ decay_particles = ['mu_plus', 'mu_minus', 'K', 'Pi']
 prob_particles = ['k', 'pi', 'mu', 'e', 'p']
 net = '_MC15TuneV1_ProbNN'
 
+lhc_data_fpath = 'data/total_dataset.pkl'
+sim_data_fpath = 'data/acceptance_mc.pkl'
+
 # 0-9 are the given bin ranges; 10 is just there to include everything (widest possible bin)
 q2_bin_ranges = {0: [0.1, 0.98],
                  1: [1.1, 2.5],

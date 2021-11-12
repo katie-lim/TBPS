@@ -25,9 +25,6 @@ df.loc[i_log['f(df, *p)']]
 """
 from data_tools_and_filters import *
 
-lhc_data_fpath = 'data/total_dataset.pkl'
-sim_data_fpath = 'data/acceptance_mc.pkl'
-
 filters_and_params = [[type_combined_filter, ('mu_plus', 0.3)],
                       [type_combined_filter, ('mu_minus', 0.3)],
                       [type_combined_filter, ('K', 0.2)],
