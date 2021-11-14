@@ -1,13 +1,14 @@
 
 import pandas as pd
 from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.ensemble import HistGradientBoostingClassifier
 from data_tools_and_filters import *
 
 
 
 
 
-def remove_background(filtered_df, p=0.15):
+def remove_background(filtered_df, p=0.15,hist=True):
     '''
     Function meant reduce the background from a filtered total dataset.
     Trains a gradient boosting classifier on the simulated files for the 
@@ -20,6 +21,7 @@ def remove_background(filtered_df, p=0.15):
     -----
     filtered_df: dataframe with some filters applied
     p: float defining the cutoff probability for a row being discarded as background
+    hist: boolean specifying whether histogram based gradient decent should be used
 
     Returns
     -----
@@ -54,8 +56,13 @@ def remove_background(filtered_df, p=0.15):
     training_df = pd.concat([sim_df].extend(background_dfs), copy=True, ignore_index=True) 
     
     #Define Classifier, train using specified categories and training df
-    BDT = GradientBoostingClassifier()
-    BDT.fit(training_df[train_cat], training_df['prob_sig'])
+    if hist:
+        BDT = HistGradientBoostingClassifier()
+        BDT.fit(training_df[train_cat], training_df['prob_sig'])
+    
+    else:
+        BDT = GradientBoostingClassifier()
+        BDT.fit(training_df[train_cat], training_df['prob_sig'])
     
     #Use trained classifier to get probability a row in the total dataset is background
     prob_background = BDT.predict_proba(filtered_df[train_cat])[:,0]
@@ -65,6 +72,12 @@ def remove_background(filtered_df, p=0.15):
     return filtered_df[filtered_df['prob_background']<p]
    
     
+
+
+        
+    
+
+
 
 
         
