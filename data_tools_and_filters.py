@@ -38,7 +38,7 @@ def make_clean_df(fpath):
         df = pd.read_csv(fpath)
     else:
         raise NameError('Can only read .pkl and .csv files')
-    df.fillna(0)
+    df.fillna(0,inplace=True)
     for col in df.columns:
         if net in col:
             # Force the values to be probabilities if they are negative
