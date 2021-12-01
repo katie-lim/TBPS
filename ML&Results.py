@@ -132,23 +132,6 @@ def log_likelihood(fl, afb, bin_number):
     normalised_scalar_array = d2gamma_p_d2q2_dcostheta(fl=fl, afb=afb, cos_theta_l=ctl, acceptance_func=acceptance_func, normalisation_factor=normalisation_factor)
     return - np.sum(np.log(normalised_scalar_array))
 
-def get_acceptance_func_nosplit(number_of_bins_in_hist = 25):
-    """
-    Returns the acceptance function without bin splitting
-    The acceptance function is obtained by fitting a 6th order polynomial to the filtered simulated dataset.
-    """
-    #simulated_dataset = load_dataset("acceptance_mc.pkl")
-    #filtered_dataset = filter_dataset(simulated_dataset)
-    
-    filtered_dataset = sim
-    
-    h, bins = np.histogram(filtered_dataset["costhetal"], bins=number_of_bins_in_hist, density=True)
-    bincenters = np.mean(np.vstack([bins[0:-1],bins[1:]]), axis=0)
-
-    popt,cov = np.polyfit(bincenters, h, 6, cov=True)
-    x = np.linspace(-1,1,50)
-    p = np.poly1d(popt)
-    return p
 
 
 def get_acceptance_func(bin_number, number_of_bins_in_hist = 25):
@@ -275,6 +258,26 @@ sim = sim.loc[(sim["B0_MM"] > 5170) & (sim["B0_MM"]  < 5700)].reset_index(drop=T
 sim = sim.loc[(sim["Kstar_MM"] > 795.9) & (sim["Kstar_MM"]  < 995.9)].reset_index(drop=True)
 
 #%%
+
+def get_acceptance_func_nosplit(number_of_bins_in_hist = 25):
+    """
+    Returns the acceptance function without bin splitting
+    The acceptance function is obtained by fitting a 6th order polynomial to the filtered simulated dataset.
+    """
+    #simulated_dataset = load_dataset("acceptance_mc.pkl")
+    #filtered_dataset = filter_dataset(simulated_dataset)
+    
+    filtered_dataset = sim
+    
+    h, bins = np.histogram(filtered_dataset["costhetal"], bins=number_of_bins_in_hist, density=True)
+    bincenters = np.mean(np.vstack([bins[0:-1],bins[1:]]), axis=0)
+
+    popt,cov = np.polyfit(bincenters, h, 6, cov=True)
+    x = np.linspace(-1,1,50)
+    p = np.poly1d(popt)
+    return p
+
+
 #inputs
 filepath = "data/total_dataset.pkl"
 fpath_si  = "predictions/std_predictions_si.json"
